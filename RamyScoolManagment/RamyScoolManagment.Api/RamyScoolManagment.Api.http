@@ -1,0 +1,6 @@
+@RamyScoolManagment.Api_HostAddress = http://localhost:5132
+
+GET {{RamyScoolManagment.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
