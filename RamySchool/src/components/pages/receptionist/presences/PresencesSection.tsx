@@ -2,15 +2,9 @@ import { useEffect, useState, useMemo } from "react";
 import PresencesTable from "./PresencesTable";
 import { usePresenceStore } from "@/stores/presencesStore";
 import { SearchInput } from "@/components/ui/search";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import EnrollmentPopup from "@/components/pages/receptionist/enrollments/EnrollmentPopup";
-
 export default function PresencesSection() {
   const [search, setSearch] = useState("");
-  const [enrollmentOpen, setEnrollmentOpen] = useState(false);
-
-  const {
+    const {
     presences,
     fetchPresences,
     loading,
@@ -44,10 +38,6 @@ export default function PresencesSection() {
             onClear={() => setSearch("")}
             className="w-80"
           />
-          <Button onClick={() => setEnrollmentOpen(true)} className="bg-blue-600 hover:bg-blue-700 shadow-sm">
-            <Plus className="h-4 w-4 mr-2" />
-            Enroll Student
-          </Button>
         </div>
       </div>
 
@@ -73,12 +63,6 @@ export default function PresencesSection() {
           <p className="text-gray-400 text-sm mt-2">Try enrolling students in groups to see their attendance</p>
         </div>
       )}
-
-      <EnrollmentPopup
-        open={enrollmentOpen}
-        onOpenChange={setEnrollmentOpen}
-        onSuccess={() => fetchPresences()}
-      />
     </div>
   );
 }

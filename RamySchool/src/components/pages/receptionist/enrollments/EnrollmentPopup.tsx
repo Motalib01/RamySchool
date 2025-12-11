@@ -38,15 +38,11 @@ export default function EnrollmentPopup({ open, onOpenChange, onSuccess }: Enrol
   const [groups, setGroups] = useState<Group[]>([]);
   const [selectedStudentId, setSelectedStudentId] = useState<string>("");
   const [selectedGroupId, setSelectedGroupId] = useState<string>("");
-  const [sessionsCount, setSessionsCount] = useState<string>("4");
-  const [startDate, setStartDate] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (open) {
       fetchData();
-      const today = new Date().toISOString().split('T')[0];
-      setStartDate(today);
     }
   }, [open]);
 
@@ -66,8 +62,8 @@ export default function EnrollmentPopup({ open, onOpenChange, onSuccess }: Enrol
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!selectedStudentId || !selectedGroupId || !sessionsCount || !startDate) {
-      alert("Please fill all fields");
+    if (!selectedStudentId || !selectedGroupId) {
+      alert("Please select both student and group");
       return;
     }
 
@@ -76,9 +72,6 @@ export default function EnrollmentPopup({ open, onOpenChange, onSuccess }: Enrol
       await EnrollmentService.create({
         studentId: parseInt(selectedStudentId),
         groupId: parseInt(selectedGroupId),
-        initialSessionsCount: parseInt(sessionsCount),
-        initialSessionStartAt: new Date(startDate).toISOString(),
-        
       });
       
       alert("Student enrolled successfully");
@@ -94,8 +87,6 @@ export default function EnrollmentPopup({ open, onOpenChange, onSuccess }: Enrol
   const handleClose = () => {
     setSelectedStudentId("");
     setSelectedGroupId("");
-    setSessionsCount("4");
-    setStartDate("");
     onOpenChange(false);
   };
 
@@ -139,27 +130,7 @@ export default function EnrollmentPopup({ open, onOpenChange, onSuccess }: Enrol
             </Select>
           </div>
 
-          <div>
-            <Label htmlFor="sessions">Initial Sessions Count</Label>
-            <Input
-              id="sessions"
-              type="number"
-              min="1"
-              value={sessionsCount}
-              onChange={(e) => setSessionsCount(e.target.value)}
-              placeholder="4"
-            />
-          </div>
 
-          <div>
-            <Label htmlFor="startDate">Start Date</Label>
-            <Input
-              id="startDate"
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-          </div>
 
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={handleClose}>

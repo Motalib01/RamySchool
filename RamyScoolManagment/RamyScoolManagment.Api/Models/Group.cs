@@ -12,5 +12,8 @@ namespace RamyScoolManagment.Api.Models
 
         // Students are connected through Enrollment (many-to-many with payload)
         public virtual ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+        
+        // Group-level sessions that all students share
+        public virtual ICollection<Session> Sessions { get; set; } = new List<Session>();
     }
 }

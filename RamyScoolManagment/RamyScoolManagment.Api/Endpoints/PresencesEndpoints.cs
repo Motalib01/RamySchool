@@ -25,8 +25,7 @@ namespace RamyScoolManagment.Api.Endpoints
         {
             var presences = await db.Presences
                 .Include(p => p.Session)
-                    .ThenInclude(s => s.Enrollment)
-                        .ThenInclude(e => e.Group)
+                    .ThenInclude(s => s.Group)
                 .Include(p => p.Student)
                 .ToListAsync();
 
@@ -34,7 +33,7 @@ namespace RamyScoolManagment.Api.Endpoints
             {
                 Id = p.Id,
                 StudentName = p.Student?.Name ?? "",
-                GroupName = p.Session?.Enrollment?.Group?.Name ?? "",
+                GroupName = p.Session?.Group?.Name ?? "",
                 SessionDate = p.Session?.ScheduledAt.ToString("yyyy-MM-dd") ?? "",
                 PresenceStatus = p.Status
             }).ToList();
@@ -46,8 +45,7 @@ namespace RamyScoolManagment.Api.Endpoints
         {
             var presence = await db.Presences
                 .Include(p => p.Session)
-                    .ThenInclude(s => s.Enrollment)
-                        .ThenInclude(e => e.Group)
+                    .ThenInclude(s => s.Group)
                 .Include(p => p.Student)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
@@ -57,7 +55,7 @@ namespace RamyScoolManagment.Api.Endpoints
             {
                 Id = presence.Id,
                 StudentName = presence.Student?.Name ?? "",
-                GroupName = presence.Session?.Enrollment?.Group?.Name ?? "",
+                GroupName = presence.Session?.Group?.Name ?? "",
                 SessionDate = presence.Session?.ScheduledAt.ToString("yyyy-MM-dd") ?? "",
                 PresenceStatus = presence.Status
             };
@@ -79,8 +77,7 @@ namespace RamyScoolManagment.Api.Endpoints
             await db.SaveChangesAsync();
 
             var session = await db.Sessions
-                .Include(s => s.Enrollment)
-                    .ThenInclude(e => e.Group)
+                .Include(s => s.Group)
                 .FirstOrDefaultAsync(s => s.Id == req.SessionId);
 
             var student = await db.Students.FindAsync(req.StudentId);
@@ -89,7 +86,7 @@ namespace RamyScoolManagment.Api.Endpoints
             {
                 Id = presence.Id,
                 StudentName = student?.Name ?? "",
-                GroupName = session?.Enrollment?.Group?.Name ?? "",
+                GroupName = session?.Group?.Name ?? "",
                 SessionDate = session?.ScheduledAt.ToString("yyyy-MM-dd") ?? "",
                 PresenceStatus = presence.Status
             };
@@ -109,8 +106,7 @@ namespace RamyScoolManagment.Api.Endpoints
             await db.SaveChangesAsync();
 
             var session = await db.Sessions
-                .Include(s => s.Enrollment)
-                    .ThenInclude(e => e.Group)
+                .Include(s => s.Group)
                 .FirstOrDefaultAsync(s => s.Id == presence.SessionId);
 
             var student = await db.Students.FindAsync(presence.StudentId);
@@ -119,7 +115,7 @@ namespace RamyScoolManagment.Api.Endpoints
             {
                 Id = presence.Id,
                 StudentName = student?.Name ?? "",
-                GroupName = session?.Enrollment?.Group?.Name ?? "",
+                GroupName = session?.Group?.Name ?? "",
                 SessionDate = session?.ScheduledAt.ToString("yyyy-MM-dd") ?? "",
                 PresenceStatus = presence.Status
             };

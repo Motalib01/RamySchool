@@ -7,8 +7,8 @@ namespace RamyScoolManagment.Api.Models
     {
         public int Id { get; set; }
 
-        // Session is tied to a specific Enrollment (a student in a group)
-        public int EnrollmentId { get; set; }
+        // Session is tied to a Group (shared by all students)
+        public int GroupId { get; set; }
 
         public DateTime ScheduledAt { get; set; }
 
@@ -24,7 +24,7 @@ namespace RamyScoolManagment.Api.Models
         // Which teacher created/added this session (useful if multiple teachers or auditing)
         public int CreatedByTeacherId { get; set; }
 
-        public virtual Enrollment Enrollment { get; set; }
+        public virtual Group Group { get; set; }
 
         // Each session has presences (status pending/present/absent)
         public virtual ICollection<Presence> Presences { get; set; } = new List<Presence>();

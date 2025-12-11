@@ -3,7 +3,7 @@ import { SearchInput } from "@/components/ui/search";
 import { useEffect, useState, useMemo } from "react";
 import StudentsTable from "./StudentTable";
 import StudentsDialog from "./StudentPopUp";
-import EnrollmentDialog from "./EnrollmentPopUp";
+import ManageEnrollmentDialog from "./ManageEnrollmentDialog";
 import { useStudentsStore } from "@/stores/studentsStore";
 
 // const studentFilters = [
@@ -39,7 +39,7 @@ export default function StudentSection() {
       <div className="flex justify-between items-center">
         <div className="flex gap-2">
           <StudentsDialog mode="add" />
-          <EnrollmentDialog />
+          <ManageEnrollmentDialog />
         </div>
 
         <div className="gap-2 flex items-center">

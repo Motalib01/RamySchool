@@ -3,8 +3,6 @@ import api from "@/lib/api";
 export interface EnrollmentRequest {
   studentId: number;
   groupId: number;
-  initialSessionsCount: number;
-  initialSessionStartAt?: string;
 }
 
 export interface EnrollmentResponse {

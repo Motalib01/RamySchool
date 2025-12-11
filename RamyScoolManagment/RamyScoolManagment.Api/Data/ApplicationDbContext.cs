@@ -66,11 +66,11 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(e => e.GroupId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Enrollment -> Session (1..*)
-        modelBuilder.Entity<Enrollment>()
-            .HasMany(e => e.Sessions)
-            .WithOne(s => s.Enrollment)
-            .HasForeignKey(s => s.EnrollmentId)
+        // Group -> Session (1..*)
+        modelBuilder.Entity<Group>()
+            .HasMany(g => g.Sessions)
+            .WithOne(s => s.Group)
+            .HasForeignKey(s => s.GroupId)
             .OnDelete(DeleteBehavior.Cascade);
 
         // Student -> Presence (1..*)

@@ -23,9 +23,8 @@ namespace RamyScoolManagment.Api.Endpoints
         private static async Task<IResult> GetAllSessions(ApplicationDbContext db)
         {
             var sessions = await db.Sessions
-                .Include(s => s.Enrollment)
-                    .ThenInclude(e => e.Group)
-                        .ThenInclude(g => g.Teacher)
+                .Include(s => s.Group)
+                    .ThenInclude(g => g.Teacher)
                 .ToListAsync();
 
             var response = sessions.Select(s => new SessionResponse
@@ -34,8 +33,8 @@ namespace RamyScoolManagment.Api.Endpoints
                 Type = s.Type,
                 ScheduledAt = s.ScheduledAt,
                 Price = s.Fee,
-                GroupName = s.Enrollment?.Group?.Name ?? "",
-                TeacherName = s.Enrollment?.Group?.Teacher?.FullName ?? "",
+                GroupName = s.Group?.Name ?? "",
+                TeacherName = s.Group?.Teacher?.FullName ?? "",
                 IsAdditional = s.IsAdditional
             }).ToList();
 
@@ -45,9 +44,8 @@ namespace RamyScoolManagment.Api.Endpoints
         private static async Task<IResult> GetSessionById(ApplicationDbContext db, int id)
         {
             var session = await db.Sessions
-                .Include(s => s.Enrollment)
-                    .ThenInclude(e => e.Group)
-                        .ThenInclude(g => g.Teacher)
+                .Include(s => s.Group)
+                    .ThenInclude(g => g.Teacher)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (session is null) return Results.NotFound();
@@ -58,8 +56,8 @@ namespace RamyScoolManagment.Api.Endpoints
                 Type = session.Type,
                 ScheduledAt = session.ScheduledAt,
                 Price = session.Fee,
-                GroupName = session.Enrollment?.Group?.Name ?? "",
-                TeacherName = session.Enrollment?.Group?.Teacher?.FullName ?? "",
+                GroupName = session.Group?.Name ?? "",
+                TeacherName = session.Group?.Teacher?.FullName ?? "",
                 IsAdditional = session.IsAdditional
             };
 

@@ -160,8 +160,9 @@ namespace RamyScoolManagment.Api.Endpoints
             var teacher = await db.Teachers
                 .Include(t => t.Groups)
                     .ThenInclude(g => g.Enrollments)
-                        .ThenInclude(e => e.Sessions)
-                            .ThenInclude(s => s.Presences)
+                .Include(t => t.Groups)
+                    .ThenInclude(g => g.Sessions)
+                        .ThenInclude(s => s.Presences)
                 .FirstOrDefaultAsync(t => t.Id == id);
                 
             if (teacher is null) return Results.NotFound();

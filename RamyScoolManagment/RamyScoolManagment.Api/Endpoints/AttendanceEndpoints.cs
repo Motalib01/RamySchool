@@ -21,8 +21,7 @@ namespace RamyScoolManagment.Api.Endpoints
         {
             var presence = await db.Presences
                 .Include(p => p.Session)
-                    .ThenInclude(s => s.Enrollment)
-                        .ThenInclude(e => e.Group)
+                    .ThenInclude(s => s.Group)
                 .FirstOrDefaultAsync(p => p.SessionId == req.SessionId && p.StudentId == req.StudentId);
             
             if (presence is null) return Results.NotFound("Presence record not found.");
@@ -37,7 +36,7 @@ namespace RamyScoolManagment.Api.Endpoints
             {
                 Id = presence.Id,
                 StudentName = student?.Name ?? "",
-                GroupName = presence.Session?.Enrollment?.Group?.Name ?? "",
+                GroupName = presence.Session?.Group?.Name ?? "",
                 SessionDate = presence.Session?.ScheduledAt.ToString("yyyy-MM-dd") ?? "",
                 PresenceStatus = presence.Status
             };

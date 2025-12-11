@@ -31,9 +31,8 @@ namespace RamyScoolManagment.Api.Endpoints
         private static async Task<IResult> GetNetRevenue(ApplicationDbContext db)
         {
             var sessions = await db.Sessions
-                .Include(s => s.Enrollment)
-                    .ThenInclude(e => e.Group)
-                        .ThenInclude(g => g.Teacher)
+                .Include(s => s.Group)
+                    .ThenInclude(g => g.Teacher)
                 .Where(s => s.Fee.HasValue)
                 .ToListAsync();
 
@@ -41,9 +40,9 @@ namespace RamyScoolManagment.Api.Endpoints
 
             foreach (var session in sessions)
             {
-                if (session.Enrollment?.Group?.Teacher != null)
+                if (session.Group?.Teacher != null)
                 {
-                    var teacherPercentage = session.Enrollment.Group.Teacher.Percentage / 100;
+                    var teacherPercentage = session.Group.Teacher.Percentage / 100;
                     netRevenue += (session.Fee ?? 0) * (1 - teacherPercentage);
                 }
             }
@@ -57,8 +56,7 @@ namespace RamyScoolManagment.Api.Endpoints
             if (teacher is null) return Results.NotFound("Teacher not found.");
 
             var sessions = await db.Sessions
-                .Include(s => s.Enrollment)
-                .ThenInclude(e => e.Group)
+                .Include(s => s.Group)
                 .Where(s => s.CreatedByTeacherId == teacherId && s.Fee.HasValue)
                 .ToListAsync();
 

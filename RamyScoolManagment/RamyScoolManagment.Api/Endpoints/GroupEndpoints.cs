@@ -128,6 +128,24 @@ namespace RamyScoolManagment.Api.Endpoints
             db.Groups.Add(group);
             await db.SaveChangesAsync();
 
+            // Create 4 default sessions for the group
+            var startDate = DateTime.UtcNow;
+            for (int i = 0; i < 4; i++)
+            {
+                var session = new Session
+                {
+                    GroupId = group.Id,
+                    ScheduledAt = startDate.AddDays(i),
+                    Type = SessionType.Free,
+                    Fee = null,
+                    IsAdditional = false,
+                    CreatedByTeacherId = group.TeacherId
+                };
+                db.Sessions.Add(session);
+            }
+
+            await db.SaveChangesAsync();
+
             var resp = new GroupResponse
             {
                 Id = group.Id,
@@ -151,37 +169,28 @@ namespace RamyScoolManagment.Api.Endpoints
             if (group is null) return Results.BadRequest($"Group {groupId} not found.");
 
             var enrollments = group.Enrollments.ToList();
-            if (!enrollments.Any()) return Results.BadRequest("No students enrolled in the group.");
 
-            // Create one session per enrollment (one per student)
-            var createdSessions = new List<Session>();
-            var presences = new List<Presence>();
-
-            foreach (var enrollment in enrollments)
+            // Create one session for the group
+            var session = new Session
             {
-                var session = new Session
-                {
-                    EnrollmentId = enrollment.Id,
-                    ScheduledAt = req.ScheduledAt,
-                    Type = (SessionType)req.Type,
-                    Fee = req.Price,
-                    IsAdditional = true,
-                    CreatedByTeacherId = group.TeacherId
-                };
+                GroupId = groupId,
+                ScheduledAt = req.ScheduledAt,
+                Type = (SessionType)req.Type,
+                Fee = req.Price,
+                IsAdditional = true,
+                CreatedByTeacherId = group.TeacherId
+            };
 
-                db.Sessions.Add(session);
-                createdSessions.Add(session);
-            }
-
+            db.Sessions.Add(session);
             await db.SaveChangesAsync();
 
-            // Create presences for all sessions
-            for (int i = 0; i < createdSessions.Count; i++)
+            // Create presences for all enrolled students
+            foreach (var enrollment in enrollments)
             {
                 var presence = new Presence
                 {
-                    SessionId = createdSessions[i].Id,
-                    StudentId = enrollments[i].StudentId,
+                    SessionId = session.Id,
+                    StudentId = enrollment.StudentId,
                     Status = PresenceStatus.Pending,
                     RecordedAt = DateTime.UtcNow
                 };
@@ -190,16 +199,16 @@ namespace RamyScoolManagment.Api.Endpoints
 
             await db.SaveChangesAsync();
 
-            var resp = createdSessions.Select(s => new SessionResponse
+            var resp = new SessionResponse
             {
-                Id = s.Id,
-                Type = s.Type,
-                ScheduledAt = s.ScheduledAt,
-                Price = s.Fee,
+                Id = session.Id,
+                Type = session.Type,
+                ScheduledAt = session.ScheduledAt,
+                Price = session.Fee,
                 GroupName = group.Name,
                 TeacherName = group.Teacher?.FullName ?? "",
-                IsAdditional = s.IsAdditional
-            });
+                IsAdditional = session.IsAdditional
+            };
 
             return Results.Created($"/api/groups/{groupId}/sessions", resp);
         }

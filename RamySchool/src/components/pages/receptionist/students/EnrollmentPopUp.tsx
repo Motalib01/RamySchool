@@ -31,8 +31,6 @@ export default function EnrollmentDialog() {
   const [form, setForm] = useState({
     studentId: 0,
     groupId: 0,
-    initialSessionsCount: 4,
-    initialSessionStartAt: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -42,10 +40,6 @@ export default function EnrollmentDialog() {
     if (open) {
       fetchGroups();
       fetchStudents();
-      setForm(prev => ({
-        ...prev,
-        initialSessionStartAt: new Date().toISOString().split('T')[0]
-      }));
     }
   }, [open, fetchGroups, fetchStudents]);
 
@@ -61,16 +55,14 @@ export default function EnrollmentDialog() {
       await EnrollmentService.create({
         studentId: form.studentId,
         groupId: form.groupId,
-        initialSessionsCount: form.initialSessionsCount,
-        initialSessionStartAt: form.initialSessionStartAt + "T10:00:00Z"
       });
       
       await fetchStudents();
       
-      setForm({ studentId: 0, groupId: 0, initialSessionsCount: 4, initialSessionStartAt: "" });
+      setForm({ studentId: 0, groupId: 0 });
       setOpen(false);
       
-      alert("Student enrolled successfully! Sessions and presences have been created.");
+      alert("Student enrolled successfully! Presences for existing group sessions have been created.");
     } catch (err: any) {
       console.error("Error enrolling student:", err);
       setError(err.response?.data?.message || "Failed to enroll student");
@@ -91,7 +83,7 @@ export default function EnrollmentDialog() {
         <DialogHeader>
           <DialogTitle>Enroll Student in Group</DialogTitle>
           <DialogDescription>
-            Select a student and group to create an enrollment with automatic session and presence creation.
+            Select a student and group to create an enrollment. The student will automatically get presences for all existing group sessions.
           </DialogDescription>
         </DialogHeader>
 
@@ -143,29 +135,7 @@ export default function EnrollmentDialog() {
             </Select>
           </div>
 
-          <div>
-            <Label>Initial Sessions Count</Label>
-            <Input
-              type="number"
-              value={form.initialSessionsCount}
-              onChange={(e) =>
-                setForm({ ...form, initialSessionsCount: Number(e.target.value) })
-              }
-              min="1"
-              max="20"
-            />
-          </div>
 
-          <div>
-            <Label>Start Date</Label>
-            <Input
-              type="date"
-              value={form.initialSessionStartAt}
-              onChange={(e) =>
-                setForm({ ...form, initialSessionStartAt: e.target.value })
-              }
-            />
-          </div>
         </div>
 
         <DialogFooter>
