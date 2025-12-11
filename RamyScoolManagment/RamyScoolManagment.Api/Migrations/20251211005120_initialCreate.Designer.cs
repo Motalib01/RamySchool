@@ -12,7 +12,7 @@ using RamyScoolManagment.Api.Data;
 namespace RamyScoolManagment.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251210191208_initialCreate")]
+    [Migration("20251211005120_initialCreate")]
     partial class initialCreate
     {
         /// <inheritdoc />
@@ -105,7 +105,8 @@ namespace RamyScoolManagment.Api.Migrations
 
                     b.HasIndex("StudentId");
 
-                    b.HasIndex("SessionId", "StudentId");
+                    b.HasIndex("SessionId", "StudentId")
+                        .IsUnique();
 
                     b.ToTable("Presences");
                 });
@@ -252,7 +253,7 @@ namespace RamyScoolManagment.Api.Migrations
                     b.HasOne("RamyScoolManagment.Api.Models.Teacher", "Teacher")
                         .WithMany("Groups")
                         .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Teacher");
@@ -269,7 +270,7 @@ namespace RamyScoolManagment.Api.Migrations
                     b.HasOne("RamyScoolManagment.Api.Models.Student", "Student")
                         .WithMany("Presences")
                         .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Session");

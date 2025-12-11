@@ -795,11 +795,20 @@
             "type": "integer",
             "format": "int32"
           },
-          "isPresent": {
-            "type": "boolean"
+          "status": {
+            "$ref": "#/components/schemas/PresenceStatus"
           }
         },
         "additionalProperties": false
+      },
+      "PresenceStatus": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "RegisterRequest": {
         "type": "object",

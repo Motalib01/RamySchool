@@ -53,8 +53,7 @@ namespace RamyScoolManagment.Api.Configuration
 
         public static void UseSwaggerConfiguration(this WebApplication app)
         {
-            if (app.Environment.IsDevelopment())
-            {
+            
                 app.UseSwagger();
                 app.UseSwaggerUI(options =>
                 {
@@ -66,7 +65,7 @@ namespace RamyScoolManagment.Api.Configuration
 
                 // Optional helper from Microsoft.AspNetCore.OpenApi
                 app.MapOpenApi();
-            }
+            
         }
     }
 }

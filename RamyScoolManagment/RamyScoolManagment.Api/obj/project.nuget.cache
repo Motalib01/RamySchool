@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "QJhmI2hzcDU=",
+  "dgSpecHash": "CuRyhbiGa1g=",
   "success": true,
-  "projectFilePath": "C:\\Users\\chemo\\OneDrive\\Documents\\Work\\RamyScool\\RamyScoolManagment\\RamyScoolManagment.Api\\RamyScoolManagment.Api.csproj",
+  "projectFilePath": "C:\\Users\\chemo\\OneDrive\\Documents\\Work\\RamySchool\\RamyScoolManagment\\RamyScoolManagment.Api\\RamyScoolManagment.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\chemo\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\chemo\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",

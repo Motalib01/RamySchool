@@ -71,7 +71,7 @@ namespace RamyScoolManagment.Api.Endpoints
             {
                 StudentId = req.StudentId,
                 SessionId = req.SessionId,
-                Status = req.IsPresent ? PresenceStatus.Present : PresenceStatus.Absent,
+                Status = req.Status,
                 RecordedAt = DateTime.UtcNow
             };
 
@@ -102,7 +102,7 @@ namespace RamyScoolManagment.Api.Endpoints
             var presence = await db.Presences.FindAsync(id);
             if (presence is null) return Results.NotFound();
 
-            presence.Status = req.IsPresent ? PresenceStatus.Present : PresenceStatus.Absent;
+            presence.Status = req.Status;
             presence.RecordedAt = DateTime.UtcNow;
 
             db.Presences.Update(presence);

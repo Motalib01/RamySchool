@@ -40,42 +40,57 @@ public class ApplicationDbContext : DbContext
             .Property(t => t.Percentage)
             .HasPrecision(5, 2); // allows percentages like 99.99
 
+        // Teacher -> Group (1..*)
+        modelBuilder.Entity<Teacher>()
+            .HasMany(t => t.Groups)
+            .WithOne(g => g.Teacher)
+            .HasForeignKey(g => g.TeacherId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         // Enrollment: unique Student + Group
         modelBuilder.Entity<Enrollment>()
             .HasIndex(e => new { e.StudentId, e.GroupId })
             .IsUnique();
 
-        // Student -> Enrollment (1..* )
+        // Student -> Enrollment (1..*)
         modelBuilder.Entity<Student>()
             .HasMany(s => s.Enrollments)
             .WithOne(e => e.Student)
             .HasForeignKey(e => e.StudentId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Group -> Enrollment
+        // Group -> Enrollment (1..*)
         modelBuilder.Entity<Group>()
             .HasMany(g => g.Enrollments)
             .WithOne(e => e.Group)
             .HasForeignKey(e => e.GroupId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Enrollment -> Session
+        // Enrollment -> Session (1..*)
         modelBuilder.Entity<Enrollment>()
             .HasMany(e => e.Sessions)
             .WithOne(s => s.Enrollment)
             .HasForeignKey(s => s.EnrollmentId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Session -> Presence
+        // Student -> Presence (1..*)
+        // CHANGED TO NoAction to avoid multiple cascade paths
+        modelBuilder.Entity<Student>()
+            .HasMany(s => s.Presences)
+            .WithOne(p => p.Student)
+            .HasForeignKey(p => p.StudentId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        // Session -> Presence (1..*)
         modelBuilder.Entity<Session>()
             .HasMany(s => s.Presences)
             .WithOne(p => p.Session)
             .HasForeignKey(p => p.SessionId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Presence: optional index for fast lookup by session+student
+        // Presence: unique index for session+student (one presence per student per session)
         modelBuilder.Entity<Presence>()
             .HasIndex(p => new { p.SessionId, p.StudentId })
-            .IsUnique(false);
+            .IsUnique();
     }
 }

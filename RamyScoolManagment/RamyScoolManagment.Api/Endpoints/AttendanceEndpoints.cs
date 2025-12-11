@@ -27,7 +27,7 @@ namespace RamyScoolManagment.Api.Endpoints
             
             if (presence is null) return Results.NotFound("Presence record not found.");
 
-            presence.Status = req.IsPresent ? PresenceStatus.Present : PresenceStatus.Absent;
+            presence.Status = req.Status;
             presence.RecordedAt = DateTime.UtcNow;
             await db.SaveChangesAsync();
 

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\chemo\\OneDrive\\Documents\\Work\\RamyScool\\RamyScoolManagment\\RamyScoolManagment.Api\\RamyScoolManagment.Api.csproj": {}
+    "C:\\Users\\chemo\\OneDrive\\Documents\\Work\\RamySchool\\RamyScoolManagment\\RamyScoolManagment.Api\\RamyScoolManagment.Api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\chemo\\OneDrive\\Documents\\Work\\RamyScool\\RamyScoolManagment\\RamyScoolManagment.Api\\RamyScoolManagment.Api.csproj": {
+    "C:\\Users\\chemo\\OneDrive\\Documents\\Work\\RamySchool\\RamyScoolManagment\\RamyScoolManagment.Api\\RamyScoolManagment.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\chemo\\OneDrive\\Documents\\Work\\RamyScool\\RamyScoolManagment\\RamyScoolManagment.Api\\RamyScoolManagment.Api.csproj",
+        "projectUniqueName": "C:\\Users\\chemo\\OneDrive\\Documents\\Work\\RamySchool\\RamyScoolManagment\\RamyScoolManagment.Api\\RamyScoolManagment.Api.csproj",
         "projectName": "RamyScoolManagment.Api",
-        "projectPath": "C:\\Users\\chemo\\OneDrive\\Documents\\Work\\RamyScool\\RamyScoolManagment\\RamyScoolManagment.Api\\RamyScoolManagment.Api.csproj",
+        "projectPath": "C:\\Users\\chemo\\OneDrive\\Documents\\Work\\RamySchool\\RamyScoolManagment\\RamyScoolManagment.Api\\RamyScoolManagment.Api.csproj",
         "packagesPath": "C:\\Users\\chemo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\chemo\\OneDrive\\Documents\\Work\\RamyScool\\RamyScoolManagment\\RamyScoolManagment.Api\\obj\\",
+        "outputPath": "C:\\Users\\chemo\\OneDrive\\Documents\\Work\\RamySchool\\RamyScoolManagment\\RamyScoolManagment.Api\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

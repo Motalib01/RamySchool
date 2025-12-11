@@ -75,7 +75,7 @@ namespace RamyScoolManagment.Api.Migrations
                         column: x => x.TeacherId,
                         principalTable: "Teachers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -155,8 +155,7 @@ namespace RamyScoolManagment.Api.Migrations
                         name: "FK_Presences_Students_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Students",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -178,7 +177,8 @@ namespace RamyScoolManagment.Api.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Presences_SessionId_StudentId",
                 table: "Presences",
-                columns: new[] { "SessionId", "StudentId" });
+                columns: new[] { "SessionId", "StudentId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Presences_StudentId",

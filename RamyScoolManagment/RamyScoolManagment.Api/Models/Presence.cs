@@ -1,4 +1,4 @@
-using System;
+        using System;
 
 namespace RamyScoolManagment.Api.Models
 {
@@ -17,7 +17,7 @@ namespace RamyScoolManagment.Api.Models
 
         public DateTime RecordedAt { get; set; } = DateTime.UtcNow;
 
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
 
         public virtual Session Session { get; set; }
         public virtual Student Student { get; set; }

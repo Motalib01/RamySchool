@@ -28,6 +28,8 @@ namespace RamyScoolManagment.Api.Endpoints
                 .Include(g => g.Teacher)
                 .Include(g => g.Enrollments)
                     .ThenInclude(e => e.Student)
+                        .ThenInclude(s => s.Presences)
+                            .ThenInclude(p => p.Session)
                 .ToListAsync();
 
             var response = groups.Select(g => new GroupResponse
@@ -50,7 +52,15 @@ namespace RamyScoolManagment.Api.Endpoints
                             TeacherId = g.TeacherId,
                             TeacherName = g.Teacher?.FullName ?? ""
                         }
-                    }
+                    },
+                    Presences = e.Student.Presences.Select(p => new PresenceResponse
+                    {
+                        Id = p.Id,
+                        StudentName = e.Student.Name,
+                        GroupName = g.Name,
+                        SessionDate = (p.Session?.ScheduledAt ?? DateTime.MinValue).ToString("yyyy-MM-dd"),
+                        PresenceStatus = p.Status
+                    }).ToList()
                 }).ToList()
             }).ToList();
 
@@ -63,6 +73,8 @@ namespace RamyScoolManagment.Api.Endpoints
                 .Include(g => g.Teacher)
                 .Include(g => g.Enrollments)
                     .ThenInclude(e => e.Student)
+                        .ThenInclude(s => s.Presences)
+                            .ThenInclude(p => p.Session)
                 .FirstOrDefaultAsync(g => g.Id == id);
 
             if (group is null) return Results.NotFound();
@@ -87,7 +99,15 @@ namespace RamyScoolManagment.Api.Endpoints
                             TeacherId = group.TeacherId,
                             TeacherName = group.Teacher?.FullName ?? ""
                         }
-                    }
+                    },
+                    Presences = e.Student.Presences.Select(p => new PresenceResponse
+                    {
+                        Id = p.Id,
+                        StudentName = e.Student.Name,
+                        GroupName = group.Name,
+                        SessionDate = (p.Session?.ScheduledAt ?? DateTime.MinValue).ToString("yyyy-MM-dd"),
+                        PresenceStatus = p.Status
+                    }).ToList()
                 }).ToList()
             };
 
@@ -171,7 +191,7 @@ namespace RamyScoolManagment.Api.Endpoints
                 ScheduledAt = s.ScheduledAt,
                 Price = s.Fee,
                 GroupName = group.Name,
-                TeacherName = group.Teacher?.FullName,
+                TeacherName = group.Teacher?.FullName ?? "",
                 IsAdditional = s.IsAdditional
             });
 
