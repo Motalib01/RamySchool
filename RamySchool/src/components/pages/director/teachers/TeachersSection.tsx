@@ -3,7 +3,6 @@ import { SearchInput } from "@/components/ui/search";
 import TeachersTable from "./TeachersTable";
 import { useTeacherStore } from "@/stores/teachersStore";
 
-
 export default function DirectorTeachersSection() {
   const [search, setSearch] = useState("");
 
@@ -13,12 +12,31 @@ export default function DirectorTeachersSection() {
     fetchTeachers();
   }, [fetchTeachers]);
 
-  const filteredTeachers = useMemo(() => {
+  // normalize service response to the shape expected by TeachersTable
+  const normalizedTeachers = useMemo(() => {
     if (!teachers) return [];
-    return teachers.filter((teacher) =>
+    return teachers.map((t) => ({
+      ...t,
+      groups: (t.groups || []).map((g) => ({
+        ...g,
+        students: (g.students || []).map((s) => ({
+          ...s,
+          presences: (s.presences || []).map((p: any) => ({
+            // copy all existing fields and ensure isPresent exists (default false)
+            ...(p || {}),
+            isPresent: (p && typeof p.isPresent !== "undefined") ? p.isPresent : false,
+          })),
+        })),
+      })),
+    }));
+  }, [teachers]);
+
+  const filteredTeachers = useMemo(() => {
+    if (!normalizedTeachers) return [];
+    return normalizedTeachers.filter((teacher) =>
       teacher.fullName?.toLowerCase().includes(search.toLowerCase())
     );
-  }, [teachers, search]);
+  }, [normalizedTeachers, search]);
 
   if (loading)
     return <p className="text-center py-4 text-gray-500">Loading teachers...</p>;
