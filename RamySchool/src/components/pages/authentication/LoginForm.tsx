@@ -41,9 +41,9 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (token && role !== null) {
-      if (role === "Admin") {
+      if (role === 0) {
         navigate("/director/dashboard")
-      } else if (role === "Secretary") {
+      } else if (role === 1) {
         navigate("/receptionist/teachers")
       } else {
         console.warn(`Unrecognized role: ${role}`);

@@ -9,8 +9,6 @@ import {
   Menu,
   X,
   DollarSign,
-  UserPlus,
-  ClipboardList,
 } from "lucide-react"
 import { FC, useState } from "react"
 import { NavLink, useNavigate } from "react-router-dom"
@@ -28,11 +26,6 @@ type MenuItem = {
 const directorMenu: MenuItem[] = [
   { label: "Dashboard", icon: Square, to: "/director/dashboard" },
   { label: "Teachers Revenue", icon: DollarSign, to: "/director/teachers" },
-  { label: "Teachers", icon: PersonStanding, to: "/director/teachers" },
-  { label: "Students", icon: Users, to: "/director/students" },
-  { label: "Groups", icon: Layers3, to: "/director/groups" },
-  { label: "Sessions", icon: BookOpen, to: "/director/sessions" },
-  { label: "Presences", icon: CalendarCheck, to: "/director/presences" },
   { label: "Log Out", icon: ArrowRight },
 ]
 

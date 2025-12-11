@@ -21,13 +21,6 @@ import EditButton from "@/components/ui/editButton";
 // import { Status } from "@/components/ui/status";
 import { useGroupStore } from "@/stores/groupStore";
 import { useStudentsStore } from "@/stores/studentsStore";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { StudentResponse } from "@/services/studentsService";
 import { ConfirmDialog } from "@/components/ui/confirmationDialog";
 

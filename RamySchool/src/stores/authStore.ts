@@ -4,7 +4,7 @@ import { login } from "@/services/authService";
 interface AuthState {
   token: string | null;
   email: string | null;
-  role: string | null;
+  role: number | null;
   loading: boolean;
   error: string | null;
 

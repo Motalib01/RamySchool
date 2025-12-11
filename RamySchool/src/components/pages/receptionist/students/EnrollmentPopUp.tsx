@@ -1,19 +1,12 @@
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
-import { UserPlusIcon } from "lucide-react";
-import { useGroupStore } from "@/stores/groupStore";
-import { useStudentsStore } from "@/stores/studentsStore";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -22,131 +15,210 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import EnrollmentService from "@/services/enrollmentService";
+import { useStudentsStore } from "@/stores/studentsStore"; // adjust path if needed
+import { useGroupStore } from "@/stores/groupStore"; // adjust path if needed
 
-export default function EnrollmentDialog() {
-  const [open, setOpen] = useState(false);
-  const { groups, fetchGroups } = useGroupStore();
-  const { students, fetchStudents } = useStudentsStore();
+export default function EnrollmentPopup({
+  open,
+  onOpenChange,
+  onSuccess,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSuccess?: () => void;
+}) {
+  // Subscribe to stores
+  const students = useStudentsStore((s) => s.students);
+  const fetchStudents = useStudentsStore((s) => s.fetchStudents);
 
-  const [form, setForm] = useState({
-    studentId: 0,
-    groupId: 0,
-  });
+  const groups = useGroupStore((g) => g.groups);
+  const fetchGroups = useGroupStore((g) => g.fetchGroups);
 
+  // local selections and loading
+  const [selectedStudentId, setSelectedStudentId] = useState<string>("");
+  const [selectedGroupId, setSelectedGroupId] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
+  // search queries for selects
+  const [studentQuery, setStudentQuery] = useState("");
+  const [groupQuery, setGroupQuery] = useState("");
+
+  // reset queries/selections when dialog opens/closes
   useEffect(() => {
-    if (open) {
-      fetchGroups();
-      fetchStudents();
+    if (!open) {
+      setSelectedStudentId("");
+      setSelectedGroupId("");
+      setStudentQuery("");
+      setGroupQuery("");
+      return;
     }
-  }, [open, fetchGroups, fetchStudents]);
+    // fetch only if lists are empty (prevents unnecessary refetch)
+    if (!students || students.length === 0) {
+      fetchStudents().catch((e) => {
+        console.error("Failed to fetch students", e);
+      });
+    }
+    if (!groups || groups.length === 0) {
+      fetchGroups().catch((e) => {
+        console.error("Failed to fetch groups", e);
+      });
+    }
+  }, [open, fetchStudents, fetchGroups]); // intentionally not adding students/groups to deps to avoid loops
 
-  const handleSubmit = async () => {
-    if (!form.studentId || !form.groupId) {
-      setError("Please select both a student and a group.");
+  // filter lists based on queries (case-insensitive)
+  const filteredStudents = useMemo(() => {
+    if (!studentQuery) return students ?? [];
+    const q = studentQuery.trim().toLowerCase();
+    return (students ?? []).filter((s) => {
+      const name = (s.name ?? "").toLowerCase();
+      const phone = (s.phoneNumber ?? "").toLowerCase();
+      return name.includes(q) || phone.includes(q) || String(s.id).includes(q);
+    });
+  }, [students, studentQuery]);
+
+  const filteredGroups = useMemo(() => {
+    if (!groupQuery) return groups ?? [];
+    const q = groupQuery.trim().toLowerCase();
+    return (groups ?? []).filter((g) => {
+      const name = (g.name ?? "").toLowerCase();
+      const teacher = (g.teacherName ?? "").toLowerCase();
+      return name.includes(q) || teacher.includes(q) || String(g.id).includes(q);
+    });
+  }, [groups, groupQuery]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedStudentId || !selectedGroupId) {
+      alert("Please select both student and group");
       return;
     }
 
     setLoading(true);
-    setError(null);
     try {
       await EnrollmentService.create({
-        studentId: form.studentId,
-        groupId: form.groupId,
+        studentId: parseInt(selectedStudentId, 10),
+        groupId: parseInt(selectedGroupId, 10),
       });
-      
-      await fetchStudents();
-      
-      setForm({ studentId: 0, groupId: 0 });
-      setOpen(false);
-      
-      alert("Student enrolled successfully! Presences for existing group sessions have been created.");
-    } catch (err: any) {
-      console.error("Error enrolling student:", err);
-      setError(err.response?.data?.message || "Failed to enroll student");
+
+      // refresh groups (so the group's students array is up-to-date)
+      try {
+        await fetchGroups();
+      } catch (err) {
+        // non-fatal: still proceed
+        console.warn("Failed to refresh groups after enrollment", err);
+      }
+
+      alert("Student enrolled successfully");
+      onSuccess?.();
+      handleClose();
+    } catch (error) {
+      console.error("Enrollment failed", error);
+      alert("Failed to enroll student");
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="rounded-full" variant="outline">
-          Enroll Student <UserPlusIcon className="h-4 w-4 ml-2" />
-        </Button>
-      </DialogTrigger>
+  const handleClose = () => {
+    setSelectedStudentId("");
+    setSelectedGroupId("");
+    setStudentQuery("");
+    setGroupQuery("");
+    onOpenChange(false);
+  };
 
-      <DialogContent className="z-50">
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Enroll Student in Group</DialogTitle>
-          <DialogDescription>
-            Select a student and group to create an enrollment. The student will automatically get presences for all existing group sessions.
-          </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-3 py-2">
-          {error && (
-            <div className="text-sm text-red-600 bg-red-50 p-2 rounded">
-              {error}
-            </div>
-          )}
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label>Student</Label>
-            <Select
-              value={form.studentId ? String(form.studentId) : ""}
-              onValueChange={(val) =>
-                setForm({ ...form, studentId: Number(val) })
-              }
-            >
+            <Label htmlFor="student">Student</Label>
+            <Select value={selectedStudentId} onValueChange={setSelectedStudentId}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a student" />
               </SelectTrigger>
+
               <SelectContent>
-                {students.map((student) => (
-                  <SelectItem key={student.id} value={String(student.id)}>
-                    {student.name}
-                  </SelectItem>
-                ))}
+                {/* Search input for students */}
+                <div className="px-3 py-2">
+                  <input
+                    type="search"
+                    value={studentQuery}
+                    onChange={(e) => setStudentQuery(e.target.value)}
+                    placeholder="Search student by name, phone or id..."
+                    className="w-full rounded-md px-3 py-2 text-sm border ring-0 focus:outline-none focus:ring-1 focus:ring-primary"
+                    // prevent the input from closing the select on Enter by preventing form submit bubbling
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") e.stopPropagation();
+                    }}
+                  />
+                </div>
+
+                <div className="max-h-56 overflow-auto">
+                  {filteredStudents.length === 0 ? (
+                    <div className="px-4 py-2 text-sm text-muted-foreground">No students found</div>
+                  ) : (
+                    filteredStudents.map((student) => (
+                      <SelectItem key={student.id} value={student.id.toString()}>
+                        {student.name} {student.phoneNumber ? `- ${student.phoneNumber}` : ""}
+                      </SelectItem>
+                    ))
+                  )}
+                </div>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <Label>Group</Label>
-            <Select
-              value={form.groupId ? String(form.groupId) : ""}
-              onValueChange={(val) =>
-                setForm({ ...form, groupId: Number(val) })
-              }
-            >
+            <Label htmlFor="group">Group</Label>
+            <Select value={selectedGroupId} onValueChange={setSelectedGroupId}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a group" />
               </SelectTrigger>
+
               <SelectContent>
-                {groups.map((group) => (
-                  <SelectItem key={group.id} value={String(group.id)}>
-                    {group.name} - {group.teacherName}
-                  </SelectItem>
-                ))}
+                {/* Search input for groups */}
+                <div className="px-3 py-2">
+                  <input
+                    type="search"
+                    value={groupQuery}
+                    onChange={(e) => setGroupQuery(e.target.value)}
+                    placeholder="Search group by name, teacher or id..."
+                    className="w-full rounded-md px-3 py-2 text-sm border ring-0 focus:outline-none focus:ring-1 focus:ring-primary"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") e.stopPropagation();
+                    }}
+                  />
+                </div>
+
+                <div className="max-h-56 overflow-auto">
+                  {filteredGroups.length === 0 ? (
+                    <div className="px-4 py-2 text-sm text-muted-foreground">No groups found</div>
+                  ) : (
+                    filteredGroups.map((group) => (
+                      <SelectItem key={group.id} value={group.id.toString()}>
+                        {group.name} {group.teacherName ? `- ${group.teacherName}` : ""}
+                      </SelectItem>
+                    ))
+                  )}
+                </div>
               </SelectContent>
             </Select>
           </div>
 
-
-        </div>
-
-        <DialogFooter>
-          <Button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="bg-green-600 hover:bg-green-700 text-white"
-          >
-            {loading ? "Enrolling..." : "Enroll Student"}
-          </Button>
-        </DialogFooter>
+          <div className="flex justify-end gap-2 pt-4">
+            <Button type="button" variant="outline" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? "Enrolling..." : "Enroll Student"}
+            </Button>
+          </div>
+        </form>
       </DialogContent>
     </Dialog>
   );
