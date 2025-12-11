@@ -2,7 +2,6 @@ import { SearchInput } from "@/components/ui/search";
 import { useEffect, useState, useMemo } from "react";
 import StudentsTable from "./StudentTable";
 import StudentsDialog from "./StudentPopUp";
-import ManageEnrollmentDialog from "./ManageEnrollmentDialog";
 import { useStudentsStore } from "@/stores/studentsStore";
 import EnrollmentPopup from "./EnrollmentPopUp";
 import { Button } from "@/components/ui/button";

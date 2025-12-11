@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ArrowRightIcon } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useAuthStore } from "@/stores/authStore"
 import { useNavigate } from "react-router-dom"
@@ -92,8 +91,6 @@ export default function LoginForm() {
       size="lg"
       variant="default"
       className="rounded-full w-full sm:w-auto px-10"
-      iconPosition="right"
-      icon={<ArrowRightIcon />}
       disabled={loading}
     >
       {loading ? "Logging in..." : "Login"}
