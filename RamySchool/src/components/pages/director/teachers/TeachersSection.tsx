@@ -22,7 +22,6 @@ export default function DirectorTeachersSection() {
         students: (g.students || []).map((s) => ({
           ...s,
           presences: (s.presences || []).map((p: any) => ({
-            // copy all existing fields and ensure isPresent exists (default false)
             ...(p || {}),
             isPresent: (p && typeof p.isPresent !== "undefined") ? p.isPresent : false,
           })),
