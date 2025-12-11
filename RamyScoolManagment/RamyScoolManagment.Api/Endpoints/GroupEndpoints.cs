@@ -153,7 +153,9 @@ namespace RamyScoolManagment.Api.Endpoints
             var enrollments = group.Enrollments.ToList();
             if (!enrollments.Any()) return Results.BadRequest("No students enrolled in the group.");
 
+            // Create one session per enrollment (one per student)
             var createdSessions = new List<Session>();
+            var presences = new List<Presence>();
 
             foreach (var enrollment in enrollments)
             {
@@ -168,18 +170,22 @@ namespace RamyScoolManagment.Api.Endpoints
                 };
 
                 db.Sessions.Add(session);
-                await db.SaveChangesAsync();
+                createdSessions.Add(session);
+            }
 
+            await db.SaveChangesAsync();
+
+            // Create presences for all sessions
+            for (int i = 0; i < createdSessions.Count; i++)
+            {
                 var presence = new Presence
                 {
-                    SessionId = session.Id,
-                    StudentId = enrollment.StudentId,
+                    SessionId = createdSessions[i].Id,
+                    StudentId = enrollments[i].StudentId,
                     Status = PresenceStatus.Pending,
                     RecordedAt = DateTime.UtcNow
                 };
                 db.Presences.Add(presence);
-
-                createdSessions.Add(session);
             }
 
             await db.SaveChangesAsync();

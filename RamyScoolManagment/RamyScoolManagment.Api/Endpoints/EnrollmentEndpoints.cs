@@ -38,7 +38,11 @@ namespace RamyScoolManagment.Api.Endpoints
             db.Enrollments.Add(enrollment);
             await db.SaveChangesAsync();
 
+            // Create initial sessions and presences
+            var sessions = new List<Session>();
+            var presences = new List<Presence>();
             var start = req.InitialSessionStartAt ?? DateTime.UtcNow;
+            
             for (int i = 0; i < req.InitialSessionsCount; i++)
             {
                 var session = new Session
@@ -51,8 +55,14 @@ namespace RamyScoolManagment.Api.Endpoints
                     CreatedByTeacherId = group.TeacherId
                 };
                 db.Sessions.Add(session);
-                await db.SaveChangesAsync();
+                sessions.Add(session);
+            }
 
+            await db.SaveChangesAsync();
+
+            // Create presences for all sessions
+            foreach (var session in sessions)
+            {
                 var presence = new Presence
                 {
                     SessionId = session.Id,

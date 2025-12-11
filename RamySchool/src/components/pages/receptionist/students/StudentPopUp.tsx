@@ -30,8 +30,7 @@ import {
 } from "@/components/ui/select";
 import { StudentResponse } from "@/services/studentsService";
 import { ConfirmDialog } from "@/components/ui/confirmationDialog";
-import { useSessionStore } from "@/stores/sessionsStore";
-import { AttendanceResponse } from "@/services/sessionsService";
+
 
 interface StudentsDialogProps {
   mode: "add" | "edit";
@@ -45,15 +44,10 @@ export default function StudentsDialog({
   const [open, setOpen] = useState(false);
   const { groups, fetchGroups } = useGroupStore();
   const { addStudent, editStudent } = useStudentsStore();
-  const { getStudentSessions } = useSessionStore();
-
   const [form, setForm] = useState({
     name: "",
     phoneNumber: "",
-    groupId: 0,
   });
-
-  const [studentSessions, setStudentSessions] = useState<AttendanceResponse[]>([]);
 
   // Fetch groups when dialog opens
   useEffect(() => {
@@ -66,35 +60,21 @@ export default function StudentsDialog({
       setForm({
         name: defaultValues.name || "",
         phoneNumber: defaultValues.phoneNumber || "",
-        groupId: defaultValues.groupId || 0,
       });
 
-      if (mode === "edit") {
-        fetchStudentSessions(defaultValues.id);
-      }
     } else {
-      setForm({ name: "", phoneNumber: "", groupId: 0 });
-      setStudentSessions([]);
+      setForm({ name: "", phoneNumber: "" });
     }
   }, [defaultValues, open, mode]);
 
-  const fetchStudentSessions = async (studentId: number) => {
-    try {
-      const sessions = await getStudentSessions(studentId);
-      setStudentSessions(sessions);
-    } catch (err) {
-      console.error("Failed to fetch student sessions:", err);
-      setStudentSessions([]);
-    }
-  };
+
 
   const handleSubmit = async () => {
-    if (!form.name || !form.phoneNumber || !form.groupId) return;
+    if (!form.name || !form.phoneNumber) return;
 
     const payload = {
       name: form.name,
       phoneNumber: form.phoneNumber,
-      groupId: Number(form.groupId),
     };
 
     try {
@@ -149,26 +129,7 @@ export default function StudentsDialog({
             />
           </div>
 
-          <div>
-            <Label>Group</Label>
-            <Select
-              value={form.groupId ? String(form.groupId) : ""}
-              onValueChange={(val) =>
-                setForm({ ...form, groupId: Number(val) })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a group" />
-              </SelectTrigger>
-              <SelectContent>
-                {groups.map((group) => (
-                  <SelectItem key={group.id} value={String(group.id)}>
-                    {group.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+
 
           {/* {mode === "edit" && studentSessions.length > 0 && (
             <div>
@@ -218,11 +179,7 @@ export default function StudentsDialog({
               <p>
                 <strong>Phone:</strong> {form.phoneNumber || "Not provided"}
               </p>
-              <p>
-                <strong>Group:</strong>{" "}
-                {groups.find((g) => g.id === form.groupId)?.name ||
-                  "Not selected"}
-              </p>
+
             </div>
           </ConfirmDialog>
         </DialogFooter>

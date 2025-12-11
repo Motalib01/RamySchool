@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RamyScoolManagment.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5c856c24a843b56624fb8f8bff83a27471c72bea")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f5faa74c96b3bb9bb0741f275537a8e5a9e4ca12")]
 [assembly: System.Reflection.AssemblyProductAttribute("RamyScoolManagment.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RamyScoolManagment.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -45,8 +45,11 @@ export const useGroupStore = create<GroupStore>((set) => ({
       set({ loading: true, error: null });
       const data = await getGroups();
       set({ groups: data, loading: false });
-    } catch (err) {
-      set({ error: "Failed to fetch groups", loading: false });
+    } catch (err: any) {
+      const errorMessage = err.code === 'ERR_NETWORK' || err.code === 'ERR_NAME_NOT_RESOLVED' 
+        ? "Cannot connect to server. Please ensure the API server is running on http://localhost:5132"
+        : "Failed to fetch groups";
+      set({ error: errorMessage, loading: false });
     }
   },
 

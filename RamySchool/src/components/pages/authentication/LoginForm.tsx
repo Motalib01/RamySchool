@@ -41,10 +41,13 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (token && role !== null) {
-      if (role === "Director" || role === "1") {
+      if (role === "Admin") {
         navigate("/director/dashboard")
-      } else if (role === "Secretary" || role === "0") {
+      } else if (role === "Secretary") {
         navigate("/receptionist/teachers")
+      } else {
+        console.warn(`Unrecognized role: ${role}`);
+        setError(`Unrecognized user role: ${role}. Please contact administrator.`);
       }
     }
   }, [token, role, navigate])

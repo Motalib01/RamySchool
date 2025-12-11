@@ -1,19 +1,23 @@
 import { useEffect, useState } from "react";
 
 export default function TopBar() {
-  const [username, setUsername] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
-    if (storedUsername) {
-      setUsername(storedUsername);
+    const storedEmail = localStorage.getItem("email");
+    if (storedEmail) {
+      setEmail(storedEmail);
     }
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 w-full flex justify-between items-center bg-white border-b shadow-sm py-4 px-10 z-50">
-      <h1 className="text-2xl font-semibold text-gray-800">Ramy School</h1>
-      <span className="text-lg font-semibold text-gray-700">{username}</span>
+    <header className="flex justify-end items-center bg-white border-b border-gray-200 px-6 h-16 shrink-0">
+      <div className="flex items-center gap-3">
+        <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center shadow-sm">
+          <span className="text-white text-sm font-semibold">{email?.charAt(0)?.toUpperCase() || '?'}</span>
+        </div>
+        <span className="text-sm font-medium text-gray-800">{email}</span>
+      </div>
     </header>
   );
 }

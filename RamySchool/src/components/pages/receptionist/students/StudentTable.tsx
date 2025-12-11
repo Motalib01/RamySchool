@@ -11,6 +11,7 @@ import DeleteButton from "@/components/ui/deleteButton";
 import StudentsDialog from "./StudentPopUp";
 import { StudentResponse } from "@/services/studentsService";
 import { useStudentsStore } from "@/stores/studentsStore";
+import EnrollmentDialog from "./EnrollmentPopUp";
 
 interface StudentsTableProps {
   data: StudentResponse[];
@@ -24,7 +25,9 @@ export default function StudentsTable({ data }: StudentsTableProps) {
   };
   return (
     <div className="bg-white rounded-xl border shadow-sm p-4">
+      
       <Table>
+        
         <TableHeader>
           <TableRow>
             <TableHead className="w-[80px]">ID</TableHead>
@@ -42,9 +45,12 @@ export default function StudentsTable({ data }: StudentsTableProps) {
               <TableCell>{student.id}</TableCell>
               <TableCell className="font-medium">{student.name}</TableCell>
               <TableCell>{student.phoneNumber}</TableCell>
-              <TableCell>{student.groupName}</TableCell>
-              <TableCell>{student.teacherName}</TableCell>
-
+              <TableCell>
+                {student.enrollments?.map(e => e.groupName).join(', ') || 'No groups'}
+              </TableCell>
+              <TableCell>
+                {student.enrollments?.map(e => e.teacherName).join(', ') || 'No teachers'}
+              </TableCell>
               <TableCell className="flex gap-1 justify-end">
                 <StudentsDialog defaultValues={student} mode="edit" />
                 <DeleteButton onConfirm={() => handleDelete(student.id)} />

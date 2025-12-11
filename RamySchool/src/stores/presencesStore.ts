@@ -25,8 +25,11 @@ export const usePresenceStore = create<PresenceState>((set, get) => ({
     try {
       const data = await PresenceService.getAll();
       set({ presences: data });
-    } catch (error) {
-      set({ error: "Failed to fetch presences" });
+    } catch (error: any) {
+      const errorMessage = error.code === 'ERR_NETWORK' || error.code === 'ERR_NAME_NOT_RESOLVED' 
+        ? "Cannot connect to server. Please ensure the API server is running on http://localhost:5132"
+        : "Failed to fetch presences";
+      set({ error: errorMessage });
       console.error(error);
     } finally {
       set({ loading: false });

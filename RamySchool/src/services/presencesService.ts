@@ -3,7 +3,7 @@ import api from "@/lib/api";
 export interface PresenceRequest {
   studentId: number;
   sessionId: number;
-  isPresent: boolean;
+  status: number; // 0=Pending, 1=Present, 2=Absent
 }
 
 export interface PresenceResponse {
@@ -11,36 +11,36 @@ export interface PresenceResponse {
   studentName: string;
   groupName: string;
   sessionDate: string;
-  isPresent: boolean;
+  presenceStatus: number; // 0=Pending, 1=Present, 2=Absent
 }
 
 const PresenceService = {
   
   async getAll(): Promise<PresenceResponse[]> {
-    const res = await api.get("/Presences");
+    const res = await api.get("/presences");
     return res.data;
   },
 
  
   async getById(id: number): Promise<PresenceResponse> {
-    const res = await api.get(`/Presences/${id}`);
+    const res = await api.get(`/presences/${id}`);
     return res.data;
   },
 
  
   async create(data: PresenceRequest): Promise<PresenceResponse> {
-    const res = await api.post("/Presences", data);
+    const res = await api.post("/presences", data);
     return res.data;
   },
 
  
   async update(id: number, data: PresenceRequest): Promise<PresenceResponse> {
-    const res = await api.put(`/Presences/${id}`, data);
+    const res = await api.put(`/presences/${id}`, data);
     return res.data;
   },
 
   async delete(id: number): Promise<void> {
-    await api.delete(`/Presences/${id}`);
+    await api.delete(`/presences/${id}`);
   },
 };
 

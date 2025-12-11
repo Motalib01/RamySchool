@@ -374,4 +374,3 @@ C:\Users\chemo\OneDrive\Documents\Work\RamySchool\RamyScoolManagment\RamyScoolMa
 C:\Users\chemo\OneDrive\Documents\Work\RamySchool\RamyScoolManagment\RamyScoolManagment.Api\obj\Debug\net10.0\RamyScoolManagment.Api.pdb
 C:\Users\chemo\OneDrive\Documents\Work\RamySchool\RamyScoolManagment\RamyScoolManagment.Api\obj\Debug\net10.0\RamyScoolManagment.Api.genruntimeconfig.cache
 C:\Users\chemo\OneDrive\Documents\Work\RamySchool\RamyScoolManagment\RamyScoolManagment.Api\obj\Debug\net10.0\ref\RamyScoolManagment.Api.dll
-C:\Users\chemo\OneDrive\Documents\Work\RamySchool\RamyScoolManagment\RamyScoolManagment.Api\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt

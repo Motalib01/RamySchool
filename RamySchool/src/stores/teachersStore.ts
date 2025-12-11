@@ -36,7 +36,10 @@ export const useTeacherStore = create<TeacherStore>((set, get) => ({
       const data = await fetchTeachers();
       set({ teachers: data });
     } catch (error: any) {
-      set({ error: error.message || "Failed to fetch teachers" });
+      const errorMessage = error.code === 'ERR_NETWORK' || error.code === 'ERR_NAME_NOT_RESOLVED' 
+        ? "Cannot connect to server. Please ensure the API server is running on http://localhost:5132"
+        : error.message || "Failed to fetch teachers";
+      set({ error: errorMessage });
     } finally {
       set({ loading: false });
     }

@@ -3,7 +3,7 @@ import SessionService, {
   SessionRequest,
   SessionResponse,
 } from "@/services/sessionsService";
-import { AttendanceResponse } from "@/services/sessionsService";
+
 
 interface SessionState {
   sessions: SessionResponse[];
@@ -17,11 +17,7 @@ interface SessionState {
   updateSession: (id: number, data: SessionRequest) => Promise<void>;
   deleteSession: (id: number) => Promise<void>;
 
-  getStudentSessions: (studentId: number) => Promise<AttendanceResponse[]>;
-  updateAttendanceState: (
-    attendanceId: number,
-    isPresent: number
-  ) => Promise<string>;
+  addSessionToGroup: (groupId: number, data: SessionRequest) => Promise<void>;
 }
 
 export const useSessionStore = create<SessionState>((set) => ({
@@ -36,7 +32,10 @@ export const useSessionStore = create<SessionState>((set) => ({
       const sessions = await SessionService.getAll();
       set({ sessions });
     } catch (error: any) {
-      set({ error: error.message || "Failed to fetch sessions" });
+      const errorMessage = error.code === 'ERR_NETWORK' || error.code === 'ERR_NAME_NOT_RESOLVED' 
+        ? "Cannot connect to server. Please ensure the API server is running on http://localhost:5132"
+        : error.message || "Failed to fetch sessions";
+      set({ error: errorMessage });
     } finally {
       set({ loading: false });
     }
@@ -94,27 +93,16 @@ export const useSessionStore = create<SessionState>((set) => ({
     }
   },
 
-  // ===== New functions =====
-  getStudentSessions: async (studentId: number) => {
+  addSessionToGroup: async (groupId: number, data: SessionRequest) => {
+    set({ loading: true, error: null });
     try {
-      const data = await SessionService.getStudentSessions(studentId);
-      return data;
-    } catch (error: any) {
-      set({ error: error.message || "Failed to fetch student sessions" });
-      return [];
-    }
-  },
-
-  updateAttendanceState: async (attendanceId: number, presenceType: number) => {
-    try {
-      const result = await SessionService.updateAttendanceState(
-        attendanceId,
-        presenceType
-      );
-      return result;
-    } catch (error: any) {
-      set({ error: error.message || "Failed to update attendance" });
-      throw error;
+      await SessionService.addSessionToGroup(groupId, data);
+      const updated = await SessionService.getAll();
+      set({ sessions: updated });
+    } catch (err: any) {
+      set({ error: err.message || "Failed to add session to group" });
+    } finally {
+      set({ loading: false });
     }
   },
 }));

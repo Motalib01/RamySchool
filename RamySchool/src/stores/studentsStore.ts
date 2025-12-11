@@ -30,8 +30,11 @@ export const useStudentsStore = create<StudentsStore>((set) => ({
       set({ loading: true, error: null });
       const data = await StudentService.getAll();
       set({ students: data, loading: false });
-    } catch (err) {
-      set({ error: "Failed to fetch students", loading: false });
+    } catch (err: any) {
+      const errorMessage = err.code === 'ERR_NETWORK' || err.code === 'ERR_NAME_NOT_RESOLVED' 
+        ? "Cannot connect to server. Please ensure the API server is running on http://localhost:5132"
+        : "Failed to fetch students";
+      set({ error: errorMessage, loading: false });
     }
   },
 

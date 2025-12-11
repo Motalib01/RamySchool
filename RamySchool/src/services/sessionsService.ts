@@ -1,19 +1,19 @@
 import api from "@/lib/api";
 
 export interface SessionRequest {
-  type: number; 
-  dateSession: string; 
-  price: number;
-  groupId: number;
+  type: number;
+  scheduledAt: string;
+  price?: number;
 }
 
 export interface SessionResponse {
   id: number;
   type: number;
-  dateSession: string;
-  price: number;
+  scheduledAt: string;
+  price?: number;
   groupName: string;
   teacherName: string;
+  isAdditional: boolean;
 }
 
 export interface AttendanceResponse {
@@ -27,40 +27,35 @@ export interface AttendanceResponse {
 const SessionService = {
   
   async getAll(): Promise<SessionResponse[]> {
-    const res = await api.get("/Sessions");
+    const res = await api.get("/sessions");
     return res.data;
   },
 
   
   async getById(id: number): Promise<SessionResponse> {
-    const res = await api.get(`/Sessions/${id}`);
+    const res = await api.get(`/sessions/${id}`);
     return res.data;
   },
 
-  async getStudentSessions(studentId: number): Promise<AttendanceResponse[]> {
-    const res = await api.get(`/Sessions/student/${studentId}`);
-    return res.data;
-  },
-
-  async updateAttendanceState(attendanceId: number, presenceType: number): Promise<string> {
-    const res = await api.put(`/Sessions/attendance/${attendanceId}`, {presenceType});
+  async addSessionToGroup(groupId: number, data: SessionRequest): Promise<SessionResponse[]> {
+    const res = await api.post(`/groups/${groupId}/sessions`, data);
     return res.data;
   },
 
   
   async create(data: SessionRequest): Promise<SessionResponse> {
-    const res = await api.post("/Sessions", data);
+    const res = await api.post("/sessions", data);
     return res.data;
   },
 
   
   async update(id: number, data: SessionRequest): Promise<SessionResponse> {
-    const res = await api.put(`/Sessions/${id}`, data);
+    const res = await api.put(`/sessions/${id}`, data);
     return res.data;
   },
 
   async delete(id: number): Promise<void> {
-    await api.delete(`/Sessions/${id}`);
+    await api.delete(`/sessions/${id}`);
   },
 };
 

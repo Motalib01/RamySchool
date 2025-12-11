@@ -3,7 +3,7 @@ import { login } from "@/services/authService";
 
 interface AuthState {
   token: string | null;
-  username: string | null;
+  email: string | null;
   role: string | null;
   loading: boolean;
   error: string | null;
@@ -14,7 +14,7 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set) => ({
   token: null,
-  username: null,
+  email: null,
   role: null,
   loading: false,
   error: null,
@@ -25,12 +25,12 @@ export const useAuthStore = create<AuthState>((set) => ({
       const data = await login(email, password);
 
       localStorage.setItem("token", data.token);
-      localStorage.setItem("username", data.username);
+      localStorage.setItem("email", data.email);
       localStorage.setItem("role", data.role);
 
       set({
         token: data.token,
-        username: data.username,
+        email: data.email,
         role: data.role,
         loading: false,
       });
@@ -45,9 +45,9 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("username");
+    localStorage.removeItem("email");
     localStorage.removeItem("role");
-    set({ token: null, username: null, role: null });
+    set({ token: null, email: null, role: null });
   },
 
 }));

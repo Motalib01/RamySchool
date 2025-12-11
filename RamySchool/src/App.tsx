@@ -26,6 +26,10 @@ function App() {
       >
         <Route path="dashboard" element={<DirectorDashboard />} />
         <Route path="teachers" element={<DirectorTeachersSection />} />
+        <Route path="students" element={<StudentSection />} />
+        <Route path="sessions" element={<SessionsSection />} />
+        <Route path="presences" element={<PresencesSection />} />
+        <Route path="groups" element={<GroupsSection />} />
       </Route>
 
       <Route

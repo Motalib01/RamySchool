@@ -30,11 +30,11 @@ interface SessionsDialogProps {
 export default function SessionsDialog({ mode, defaultValues }: SessionsDialogProps) {
   const [open, setOpen] = useState(false);
   const { groups } = useGroupStore();
-  const { addSession, updateSession } = useSessionStore();
+  const { addSession, updateSession, addSessionToGroup } = useSessionStore();
 
   const [form, setForm] = useState({
     type: 0,
-    dateSession: "",
+    scheduledAt: "",
     price: "",
     groupId: "",
   });
@@ -43,7 +43,7 @@ export default function SessionsDialog({ mode, defaultValues }: SessionsDialogPr
   if (defaultValues) {
     setForm({
       type: defaultValues.type ?? 0,
-      dateSession: defaultValues.dateSession
+      scheduledAt: defaultValues.dateSession
         ? defaultValues.dateSession.split("T")[0]
         : "",
       price: defaultValues.price?.toString() ?? "",
@@ -52,7 +52,7 @@ export default function SessionsDialog({ mode, defaultValues }: SessionsDialogPr
   } else {
     setForm({
       type: 0,
-      dateSession: "",
+      scheduledAt: "",
       price: "",
       groupId: "",
     });
@@ -60,20 +60,19 @@ export default function SessionsDialog({ mode, defaultValues }: SessionsDialogPr
 }, [defaultValues, open]);
 
 const handleSubmit = async () => {
-  if (!form.dateSession || !form.groupId) return;
+  if (!form.scheduledAt || !form.groupId) return;
   if (form.type === 0 && !form.price) return;
 
   const sessionData = {
     type: form.type,
-    dateSession: new Date(form.dateSession).toISOString(),
-    price: form.type === 1 ? 0 : parseFloat(form.price),
-    groupId: parseInt(form.groupId),
+    scheduledAt: new Date(form.scheduledAt).toISOString(),
+    price: form.type === 1 ? undefined : parseFloat(form.price),
   };
 
   if (mode === "add") {
-    await addSession(sessionData);
+    await addSessionToGroup(parseInt(form.groupId), sessionData);
   } else if (defaultValues?.id) {
-    await updateSession(defaultValues.id, sessionData);
+    await updateSession(defaultValues.id, { ...sessionData, scheduledAt: sessionData.scheduledAt });
   }
 
   setOpen(false);
@@ -118,9 +117,9 @@ const handleSubmit = async () => {
             <Label>Session Date</Label>
             <Input
               type="datetime-local"
-              value={form.dateSession}
+              value={form.scheduledAt}
               onChange={(e) =>
-                setForm({ ...form, dateSession: e.target.value })
+                setForm({ ...form, scheduledAt: e.target.value })
               }
             />
           </div>
@@ -172,7 +171,7 @@ const handleSubmit = async () => {
         <strong>Type:</strong> {form.type === 1 ? "Free Session" : "Paid Session"}
       </p>
       <p>
-        <strong>Date:</strong> {form.dateSession || "Not selected"}
+        <strong>Date:</strong> {form.scheduledAt || "Not selected"}
       </p>
       {form.type === 0 && (
         <p>

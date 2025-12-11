@@ -157,8 +157,26 @@ namespace RamyScoolManagment.Api.Endpoints
 
         private static async Task<IResult> DeleteTeacher(ApplicationDbContext db, int id)
         {
-            var teacher = await db.Teachers.FindAsync(id);
+            var teacher = await db.Teachers
+                .Include(t => t.Groups)
+                    .ThenInclude(g => g.Enrollments)
+                        .ThenInclude(e => e.Sessions)
+                            .ThenInclude(s => s.Presences)
+                .FirstOrDefaultAsync(t => t.Id == id);
+                
             if (teacher is null) return Results.NotFound();
+
+            // Check if teacher has groups with enrollments
+            if (teacher.Groups.Any(g => g.Enrollments.Any()))
+            {
+                return Results.BadRequest("Cannot delete teacher with active groups and students. Please remove all students from groups first.");
+            }
+
+            // Delete empty groups first
+            foreach (var group in teacher.Groups.ToList())
+            {
+                db.Groups.Remove(group);
+            }
 
             db.Teachers.Remove(teacher);
             await db.SaveChangesAsync();

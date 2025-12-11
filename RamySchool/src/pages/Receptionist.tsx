@@ -4,14 +4,14 @@ import { Outlet } from "react-router-dom";
 
 export default function Receptionist() {
   return (
-    <div className="w-full h-screen flex flex-col">
-      <TopBar />
-
-      <div className="flex flex-1 pt-40">
-        <Sidebar role="receptionist" />
-
-        <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">
-          <Outlet />
+    <div className="h-screen flex">
+      <Sidebar role="receptionist" />
+      <div className="flex-1 flex flex-col">
+        <TopBar />
+        <main className="flex-1 bg-gray-50 overflow-y-auto">
+          <div className="p-8">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

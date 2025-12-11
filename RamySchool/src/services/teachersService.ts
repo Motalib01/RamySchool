@@ -11,7 +11,7 @@ export interface Presence {
   studentName: string;
   groupName: string;
   sessionDate: string;
-  isPresent: boolean;
+  presenceStatus: number; // 0=Pending, 1=Present, 2=Absent
 }
 
 export interface Student {
@@ -44,21 +44,21 @@ export interface SessionResponse{
     sessionId: number;
     sessionNumber: number;
     date: string;
-    isPresent: boolean;
+    presenceStatus: number; // 0=Pending, 1=Present, 2=Absent
 }
 
 export async function fetchTeachers(): Promise<TeacherResponse[]> {
-  const res = await api.get("/Teachers");
+  const res = await api.get("/teachers");
   return res.data;
 }
 
 export async function fetchStudentSessionsForTeacher(studentId: number): Promise<SessionResponse[]> {
-  const res = await api.get(`/Teachers/student/${studentId}/sessions`);
+  const res = await api.get(`/teachers/student/${studentId}/sessions`);
   return res.data;
 }
 
 export async function addTeacher(data: TeacherRequest): Promise<TeacherResponse> {
-  const res = await api.post("/Teachers", data);
+  const res = await api.post("/teachers", data);
   return res.data;
 }
 
@@ -66,10 +66,10 @@ export async function updateTeacher(
   id: number,
   data: TeacherRequest
 ): Promise<TeacherResponse> {
-  const res = await api.put(`/Teachers/${id}`, data);
+  const res = await api.put(`/teachers/${id}`, data);
   return res.data;
 }
 
 export async function deleteTeacher(id: number): Promise<void> {
-  await api.delete(`/Teachers/${id}`);
+  await api.delete(`/teachers/${id}`);
 }
