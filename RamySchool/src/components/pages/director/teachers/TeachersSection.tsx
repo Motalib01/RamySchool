@@ -54,7 +54,6 @@ export default function DirectorTeachersSection() {
           onClear={() => setSearch("")}
         />
       </div>
-
       <TeachersTable data={filteredTeachers} />
     </div>
   );
