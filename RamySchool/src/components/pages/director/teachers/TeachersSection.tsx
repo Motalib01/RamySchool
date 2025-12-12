@@ -12,7 +12,6 @@ export default function DirectorTeachersSection() {
     fetchTeachers();
   }, [fetchTeachers]);
 
-  // normalize service response to the shape expected by TeachersTable
   const normalizedTeachers = useMemo(() => {
     if (!teachers) return [];
     return teachers.map((t) => ({
